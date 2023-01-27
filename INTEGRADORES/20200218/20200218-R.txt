@@ -1,0 +1,111 @@
+Ejercicio 1
+
+a) Explicar que es el ciclo de fetch y para que se utiliza.
+
+El ciclo de fetch es el algoritmo que ejecuta el procesador desde que se enciende hasta que se apaga.
+Se utilizar para ejecutar las instrucciones que se encuentran en la memoria, haciendo funconal a la computadora.
+
+El ciclo fetch se podría definir en estos pasos:
+
+1º fetch: El primer paso del ciclo de fetch es la lectura de la próxima instrucción
+a ser ejecutada, guardada en el registro de instrucción para posteriormente ser decodificada.
+El proceso de fetcheo está microprogramado en la rom en la posición 0.
+0: R[ir] = AND(R[pc], R[pc]); READ;
+Esta microinstrucción pone lo que haya en el registro PC (contador de programa) 
+en el bus A de direcciones y simultáneamente se lee el contenido que se encuentre en ese bus, 
+guardándose en el registro ir (de instrucciones).
+
+2º decode: El segundo paso del ciclo de fetch es la decodificación de la instrucción.
+El proceso de decodificación está microprogramado en la rom en la posición 1.
+1: DECODE;
+Esta microinstrucción lee el op y op3 de la instrucción ir
+y al sumarle un 1 a la izquierda y dos 0 a la derecha, se obtienen 11 bits que conforman
+la dirección de la próxima microinstucción a ejecutar. 
+
+3º execute: El tercer paso del ciclo de fetch es la ejecución de la instrucción.
+Luego de tener la microinstrucción lista en el MIR (registro de microinstrucción),
+cada campo de este está físicamente conectado por cables a los diferentes componentes
+que recibirán los bits correspondiente a su sección del MIR. 
+Esto resulta en ejecutar en la ALU la función que dictamina la microinstrucción, con los registros
+de fuente y destino correspondientes, y con la condición de salto a verificar luego de la ejecución.
+
+4º repeat: luego de haber ejecutado la instrucción, el CLB determinará de donde se obtendrá 
+la siguiente instrucción a ejecutar. Esta podría ser la siguiente, una determinada por el JUMP ADDR, o la instrucción de decodificar.
+
+
+
+
+b) Explicar de qué manera se determina durante la ejecución de microcódigo 
+la próxima microinstucción a ser ejecutada.
+
+Al darle corriente al microprocesador, la primera siempre será la 
+ 0: R[ir] = AND(R[pc], R[pc]); READ;
+Esta microinstrucción pone lo que haya en el registro PC (contador de programa) 
+en el bus A de direcciones y simultáneamente se lee el contenido que se encuentre en ese bus, 
+guardándose en el registro ir (de instrucciones).
+
+Luego, la próxima microinstrucción a ejecutar dependerá de la anterior, afectando al
+El CBL (Control Branch Logic) y haciendo uso del JUMP ADDR si es necesario.
+
+Por ejemplo, si la microinstrucción decodificada tiene 000 en los bits de COND, 
+entonces la próxima microinstrucción será simplemente la siguiente a la actual.
+En cambio, si se usa 110 por ejemplo, entonces utilizará la address que se guarda en
+la sección de JUMP ADDR de la microinstrucción. Si se usa el 111, significa que se tiene
+que decodifiar la instrucción utilizando los opcodes del ir.
+Por último, cualquir de las otras combinaciones son códigos de salto condicional, entonces
+esto dependera de la los flags del PSR que hayan sido activados luego de la ejecución de la ALU.
+
+*Hacer grafiquito*
+
+c) Dar ejemplos de instrucciones de assembler cuya implementación en microcódigo
+requiere pasar por la microinstucción almacenada en la posicion 2047. 
+   Dar ejemplos de insutrcciones que no requieren pasar por esa línea de microcódigo.
+   Justificar la respuesta.
+
+Pasar por la microinstrucción almacenada en la posicion 2047 significa que se tiene que pasar
+a la siguiente instrucción del programa guardada en memoria, dado que se incrementa en 1 el contador de programa.
+
+Las instrucciones que no tienen saltos condicionales generalmente pasaran por la 2047, por ejemplo:
+ld, add, and, or, srl, sll, sub, xor, etc.
+
+Las instrucciones que no requieren pasaron por la 2047 son las que no necesitan incrementar en 1 el contador de programa,
+porque no se necesita ir a la próxima instrucción inmediata, si no a alguna determinada por el programador. Por ejemplo:
+
+call, jumpl, ba, etc.
+
+Ejercicio 2
+
+Un programa declara un arreglo de 32 palabras de 32 bits
+y carga en él las primeras 32 lecturas de un periférico que está 
+mapeado en la dirección C3101200h. Una vez finalidad estatarea,
+invoca una subrutina que calcula su promedio. por el stack y termina.
+
+18-02-2020.asm
+
+Ejercicio 3
+
+Definir el contenido de la tabla de simbolos e indicar cuales son las etapas en que
+su información es necesaria, considerando desde el compilado hasta el tiempo de 
+ejecución.
+
+La tabla de símbolos es una tabla que almacena todas las etiquetas y constantes del programa.
+La tabla de símbolos es creada en la primer pasada del ensamblador. En esta, se guardan
+los símbolos que hacen referencia a constantes o etiquetas, junto a el valor que representan.
+Si en la primer pasada no se encuentra el valor de una etiqueta, el ensamblador lanza un error.
+
+En la segunda pasada del assembler, se busca en la tabla de símbolos el valor de las constantes y etiquetas
+al momento de hace la transcodificación 1 a 1 de assembler a código objeto, reemplazando las referencias
+por su valor en la tabla de símbolos.
+
+La tabla de símbolos a su vez guarda si un símbolo es global o externa. Esto es usado 
+luego para el proceso de linkeo a la hora de combinar módulos. El ensamblador incluye 
+en el encabezado del módulo una lista de símbolos globales/externos para ser resueltos en 
+tiempo de linkeo.
+
+También, la tabla de símbolos guarda si el símoblo es o no relocalizable. En caso de serlo,
+este símbolo podrá ser acomodado en diferentes direcciones de memoria a la hora de linkear-cargar el programa.
+Un programa que empieza en 2048 puede ser cargado en la dirección 3000 por ejemplo, simplemente se le suma 952 a la dirección.
+
+
+
+

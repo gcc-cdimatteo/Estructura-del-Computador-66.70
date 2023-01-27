@@ -1,0 +1,27 @@
+Enunciado final:
+
+1. Un programa recibe a traves de la pila la direccion de un arreglo de 16 elementos enteros signados, 
+calcula su promedio y lo escribe en un periferico mapeado en la direccion A4C10010h. 
+El calculo del promedio debe ser reaizado invocando una subrutina declarada en el mismo modulo que el programa principal. 
+Esta recibe y devuelve parametros via stack (el numero de elementos no es necesario pasarlo como parametro, 
+la rutina presupone que son 16). En caso de que el calculo del promedio se vaya de rango la rutina devuelve un cero.
+
+2. Un microprocesador arc sufre una falla que hace que la entrada del multiplexor del bus A proveniente del 
+registro de instrucciones quede conectada permanentemente a cero en su bit menos significativo. 
+Explique de que manera afecta esto el funcionamiento. Indique al menos dos ejemplos de codigo assembler que se 
+ejecutaran con errores y al menos dos ejemplos de codigo assembler que se ejecutaran normalmente. 
+Indique en que consiste el error en los casos en que la falla ocurre.
+
+3. Un microprocesador arc sufre una falla que hace que el bit READ del registro de microinstrucciones este 
+permanentemente en cero. Explique de que manera afecta esto el funcionamiento. Indique al menos dos ejemplos de 
+codigo assembler que se ejecutaran con errores y al menos dos ejemplos de codigo assembler que se ejecutaran normalmente. 
+Indique en que consiste el error en los casos en que la falla ocurre.
+
+4.a Una de las lineas de un programa en assembler incluye la siguiente instruccion "be for2" sin embargo la etiqueta "for2"  
+por error no fue declarada en el codigo. Indique en que etapa del proceso de ensamblado esto error es detectado y 
+de que manera procede. 
+4.b Explique en que instancia se produce el linkeo del codigo de una funcion en una libreria de linkeo dinamico o dll
+
+5.a Compare las tecnologias de memoria estatica y de memoria dinamica, indicando sus areas de aplicacion 
+5.b Que pautas pueden ser consideradas en la programacion en alto nivel para obtener mayor provecho de la memoria cache. 
+Justifique

@@ -1,0 +1,155 @@
+Ejercicio 1
+Un programa recibe por stack la dirección de inicio y largo de un arreglo. Se sabe que
+este arreglo está conformado por elementos en punto fijo con 4 bits para la parte
+fraccionaria. El programa debe obtener la suma de todos los elementos cuya parte
+entera es nula y escribir este resultado en un periférico mapeado en la dirección
+BAD00132h. Para verificar si cada elemento cumple con la condición indicada se debe
+pasar el mismo a una rutina por via stack devolviendo esta también por stack un 1 si a
+condición se cumple o un 0 si no se cumple. Subrutina y programa principal está en el
+mismo módulo
+
+16-03-2021.asm
+
+
+
+
+
+
+Ejercicio 2
+a) Explique en qué aspectos se afectaría la operación del microprocesador ARC si
+una falla de hardware hiciera que la salida del flipflop menos significativo del
+registro de microinstrucciones quedara conectada permanentemente a cero.
+Sea específico y justifique detalladamente su respuesta en todos los pasos del
+ciclo de fetch.
+
+el bit menos significativo del registro de microinstrucciones es, a su vez, el bit menos significativo 
+de la dirección donde se encuentra la próxima microinstucción a la cual saltar si es que el multiplexer del CS Adress 
+tiene su entrada de control en 01 (Jump). Si este está permanentemente conectado a 0, entonces esta direccion de la próxima
+microinstucción no podrá ser impar.
+
+En el primer paso del ciclo de fetch, se lee la siguiente instrucción de memoria a ser ejecutada 
+y guardada en el registro de instrucción %ir.
+
+En el segundo paso de ciclo de fetch, cuando se decodificado la instrucción,    
+se leen los bits del op y del op3 del registro de instrucción %ir
+y se le agrega un 1 a la izquierda y dos 0 a la derecha, se obtiene  a una de las 2^11 direcciónes de microinstucciones a ejecutar. 
+
+En el tercer paso del ciclo de fetch, cuando se ejecuta la microinstucción, 
+y en el caso donde el código de condición exprese un salto con JUMP ADDR, 
+entonces se lee la dirección de salto. Pero, teniendo en cuenta que el bit menos significativo
+siempre estará en 0, cualquier microinstucción que quiera hacer un salto a otra de numero impar,
+no podrá hacerlo. Pues si el bit menos signigicativo está siempre conectado a 0, la dirección nunca podría impar.
+Simplemente irá a la microinstrucción anterior. Esto provocará comportamiento inesperado del microprocesador, produciendo
+bugs en los programas.
+
+En el cuarto paso del ciclo fetch, se repite el primer paso. 
+
+b) Describa una estructura del tipo bus, indicar su propósito y sus aplicaciones
+específicas en el microprocesador y en el conjunto de una computadora.
+
+La estructura de tipo bus es una estructura en la cual los elementos del sistema al cual pertenecen, 
+estan interconectados por una red de cables compartidos (buses). A través de estos buses se pueden comunicar
+muchos dispositivos sin necesidad de conexión directa entre ellos, ya que muchos comparten el mismo canal.
+
+En el caso del ARC, el bus de sistema esta compuesto por otros 3 buses: 
+    - bus de datos: este bus se utiliza para enviar y recibir datos de los dispositivos.
+    - bus de direcciones: este bus se utiliza decidir a donde se envían los datos.
+    - bus de control: este bus se utiliza para enviar y recibir códigos de control y así manipula el flujo de los datos.
+
+Los buses son 32 cables en paralelo cada uno, donde llevan los bits individuales que conforman a la palabra de 32 bits.
+
+Los componentes que se conectan a los buses son: CPU y ALU como una entidad conjunta, Memoria y I/O.
+Durante la lectura y escritura en el mapa de memoria, el bus de direcciones indica a donde la CPU va a escribir o leer.
+Esto puede ser a la memoria RAM o a dispositivos de salido y entrada. La CPU utiliza al bus de control para decidir
+de donde sacar los datos a enviar o donde escribir los datos entre otras cosas.
+
+
+
+
+
+
+Ejercicio 3
+a) Comparar la operatoria del programa ensamblador cuando procesa subrutinas
+declaradas en el mismo modulo que el main y en módulos distintos
+
+Además de generar el código máquina a partir del código de ensamblado y calcular ciertas operaciones de constantes,
+el programa ensamblador genera una tabla de símbolos donde se guarda referencias a valores usados en tiempo de ensamblado
+(constantes declaradas con equ, etiquetas para variables o subrutinas, etc).
+
+En ambos casos, el ensablador tiene un campo que hace referencia a la subrutina en la tabla de símbolos
+indicando la dirección en la cual se encuentra, clasificandola como global/externa/ninguna y si es o no relocalizable. 
+
+En el caso de tener subrutinas en el mismo módulo que en el main, se guardará la dirección de memoria en la cual se encuentra
+la subrutina, relativo al .org que se haya utilizado, poniendo si es externa o no, y poniendo sí en el campo de relocalizable,
+ya sea interna o externa, necesita poder adaptarse a la dirección que el sistema operativo le permita.
+
+En el caso de tener declarados subrutinas en módulos externos al main, la tabla de símbolos debe guardar
+las referencias a estas asignándolas con su respectiva clasificación (extern o global), dejando vacío 
+el campo de relocalizable y por supuesto, del valor, ya que eso le corresponde al módulo al cual la subrutina pertenece y será 
+calculado cuando se haga el linkeo-loading.
+
+b) Explique si en la programación con lenguajes de alto nivel (y exclusivamente a
+los fines de una mayor velocidad de ejecucion) es más coveniente o menos
+conveniente (a) definir los valores constantes declarándolos en el Código como
+constantes o (b) declarándolos como una variable inicializada al correspondiente
+valor.
+Indique ventajas, desventajas y limitaciones de cada caso analizándolo sobre la
+base del assembler que se genera con cada una.
+
+En un lenguaje de alto nivel, y refiriéndonos únicamente a los fines de una mayor velocidad de ejecución, es más conveniente
+utilizar constantes en vez de variables almacenadas en memoria, por el simple hecho de que el valor de las variables
+estarán en su gran mayoría viviendo en memoria (exceptuando optimizaciones del compilador que utilice algunos registros).
+Por el contrario, las constantes que caben en una instrucción (13 bits en el caso de ARC) no necesitan ser guardadas 
+en memoria, si no que ocupan parte de los bits que conforman a la instrucción y a la hora de operarlos, se usan registros y no memoria.
+Eso se llama acceso inmediato.
+
+
+
+
+
+Ejercicio 4
+a) Describa alguna técnica de programación en alto nivel que tienda a minimizar el
+número de fallos de la cache.
+
+El programador no tiene un control directo sobre el cache ya que su funcionamiento es transparente. 
+Cada acceso a memoria pedido por el programador es interceptado por el hardware de cache y procesado (el programador no tiene forma de saber si existe o no cache). 
+Para el programador fue solo un acceso a memoria. Aun asi, se puede programar en cualquier lenguaje de alto nivel teniendo en cuenta prinicipios generales 
+basados en el conocimiento de como opera la memoria cache. 
+Ejemplo, si tenemos varias variables enteras con las que cierta seccion del programa accede repetidamente, 
+nos conviene que esten todas en el mismo bloque de cache.
+asi el programa prosigue sin fallos de cache. Si ademas declaramos un arreglo (ocupa mucho espacio) no conviene que sea declarado entre medio de estas variables ya que (los compiladores generalmente respetan el orden de declaracion para la asignacion a memoria) 
+de ese modo podrian pertenecer a bloques diferentes. 
+ Esto aplica tanto a variables globales como tambien a las declaradas en un procedimiento (estas se implementan en el stack, 
+ pero el stack tambien es ram y asi es tratado por el hardware de cache)
+
+La optimización de la cache desde una programación de alto nivel consta en tener en cuenta los principios de la misma:
+
+localidad espacial: los datos cercanos a cierta posición referenciada de memoria son estadísticamente mas probables de 
+ser accedidos en comparación con datos lejanos.
+temporal: cuando un programa referencia a cierta posición de memoria, es estadísticamente
+probable que lo vuelva a hacer en poco tiempo.
+
+Teniendo estas heurísticas en cuenta y sabiendo que la memoria cache almacena de a bloques de datos, hay dos cosas directas 
+que podemos hacer:
+
+1) Haciendo referencia la localidad espacial, se recomienda acceder a las estructuras de datos de forma
+ estructurada, secuencial y predictiva. Ej:
+    Si tenemos un arreglo en memoria, es mas eficiente acceder a los datos incrementando en 1 la posición en cada iteración
+    en vez de ir accediendo de forma no linea, por ejemplo accediendo primero al índice 0, luego al 10000, luego al 1, luego al 100001, etc.
+    Al ir haciendo saltos distantes, la cache dentría que estar constantemente trayendo diferentes bloques de memoria, relentizando el algoritmo.
+
+2) Haciendo referencia a la localidad temporal, se recomienda almacenar de manera "empaquetada" a aquellas variables 
+y funciones mas utilizadas en el programa, y dejar a las que son menos utilizadas, más alejadas. Ej:
+    Si tenemos un arreglo de objetos en memoria (por ej structs), pero solo se acceden a ciertos atributos de esos objetos en la mayoría del tiempo,
+    es conveniente almacenar esos atributos en un array separado, en vez de traer a cache muchos bytes que no serán utilizados.
+    Al tener al array con los atributos mas utilizados, hacemos uso de la localidad temporal y espacial, aunque podría empeorar la legibilidad de código.
+
+
+b) ¿Qué funciones cumple el componente de hardware conocido como manejador de memoria RAM o MMU?
+
+la MMU es un componente de hardware normalmente integrado a la CPU que se encargar de manejar el acceso a la memoria física.
+Tiene tres funciones principales:
+
+1. Traducción de direcciones: Mapea las direcciones virtuales de los procesos a direcciones físicas de la ram o disco rígido si es que la ram se quedo sin espacio.
+2. Control de Caché: Almacena los datos de la memoria física en una cache, para que no se tenga que volver a leer de disco rígido o ram.
+3. Control de acceso a memoria: Controla el acceso a la memoria física, para que los procesos no puedan acceder a una dirección que no les pertenece.

@@ -1,0 +1,73 @@
+1. 
+a)explique detalldamente la función del bloque "lógica de control de saltos"
+en la microarquitectura de la máquina de ARC. Plantear un método para diseñar su
+lógica interna.
+
+El bloque "lógica de control de saltos" es un componente de la microarquitectura que se encarga 
+decidir en base a los flags y el código de salto, la próxima instrucción a ejectuar.
+Es un sistema combinacional que tiene de entrada: 4 bits de flag del psr, 3 bits del código de condición del MIR y el bit 13 del ir.
+la salida es una de estas 3: 00 (next), 01 (jump), 10 (instant decode). Esta salida funciona como entrada de control al multiplexer de 
+dirección de microinstrucciones.
+
+00 (next): significa que tome la entrada a través del incrementador 
+01 (jump): significa que tome la entrada de la JUMP ADDR del MIR
+10 (instant decode): significa que decodifique a partir de los op codes, que microinstrucción ejecutar. (1 + op + op3 + 00)
+
+dado que es un sistema combinacional, se puede decir que la salida es una combinación de las entradas determinísticamente. Con lo cual,
+podríamos plantear la función lógica a través de una tabla de 8 entradas y 2 salidas. Luego, una vez obtenidos los valores para cada entrada,
+se puede reducir utilizando algún método de simplificación como el quinn-Mckluskey o el Karnaugh. Por último, se implementa el circuito físicamente.
+
+b) Explicar que entiende por nanoprogramación. Justificar su necesidad, describir pros y contras
+
+nanoprogramación es simplemente otra manera guardar las microinstrucción ROM para tener un uso mas eficiente de espacio a costa de la velocidad y simplicidad.
+Dado que hay varias direcciones en las cuales se encuentra microcódigo repetido si utilizamos el clásico 2048 palabras de 41 bits, la nanoprogramación propone
+tener 2 tablas: una de 2048 palabras de 7 bits que guarden un puntero a la dirección de la microinstrucción que se ejecuta. La otra tabla guarda de forma única
+cada microinstrucción distinta. Entonces, de esta manera, varias palabras de la primer tabla apuntan a las misma direcciones de la segunda, sin generar código repetido.
+
+Dependiendo de nuestro caso de uso, si necesitasemos ahorrar mucho en espacio, podríamos hacer uso de la nanoprogramación para reducir ordenes de magnitud el espacio
+en bits utilizado por la rom. O tal vez, si estamos por alguna razon constantemente cambiando el código de la ROM, es mas sencillo tener ese código en un solo lugar
+en vez de repetido, pues solo hay que cambiarlo en un lugar específico.
+
+Lo malo de la nanoprogramación es que es más complejo de implementar y tal vez mas lento, dado este paso intermedio de tener que ir primero al puntero y Luego
+fetchear la microinstrucción a ser ejecutada.
+
+2) mas de lo mismo, solo es cuestión de repasar código
+
+3) explique diferencias entre un link-editor, un linking-loader, un linking-loader dinámico
+datallando la función cumplida por cada uno.
+
+Un link-editor es un programa que combina archivos objeto en un único programa, llamado archivo de carga. 
+El linker se encarga de: 
+- resolver todas las referencias globales-externas 
+- relocalizar los módulos para que queden pegados. Durante estet proceso muchas direcciones serán relocalizadas para reflejas su nueva locación
+- especifica el símbolo donde comienza el programa
+
+Cada vez que se hace un linkeo, se copia el código de los módulos en ese momento y se guarda en un archivo objeto.
+
+Un linking-loader además de hacer el linkeo de módulos, carga el programa ejecutable en memoria, relocalizando las direcciones dentro
+del archivo ejecutable para correr en el espacio de memoria brindando por el SO, que usualmente difiere del que está en el código, pues hay otros programas corriendo.
+Cada vez que se carga el programa, se copia el código de los módulos a utilizar, con lo cual si se corren varios programas que utilizan el mismo módulo, 
+todos tendrán corriendo una copia del módulo al mismo tiempo.
+
+Linking loader dinamico es un linking loader que carga rutinas solo cuando el programa las necesita (DLL),
+ toma la función que necesita de la librería y la linkea en tiempo de ejecución en vez de tener muchas apps levantando el 
+ codigo de la misma librería al mismo tiempo.
+
+4) proponer un circuito de decodificaciónn para RAM que permita obtener un mapa de memoria
+con 2 Gbytes dedicados a la memoria RAM. Se cuenta con 2 chip de 512 Mbytes y 1 chip de 1 Gbytes.
+Indicar todas las conexiones entre bus, memoria y procesador (no considerar mmu ni caché)
+
+2 Gbytes = 2 * 2^30 bytes.
+
+A30     A29     A28     A27     ...     A2      A1      A0
+0       0       0       0       ...     0       0       0   ] \
+                                                                1 Gbytes direccionados
+0       1       1       1       ...     1       1       1   ] /
+
+1       0       0       0       ...     0       0       0   ] \
+                                                                512 Mbytes direccionados
+1       0       1       1       ...     1       1       1   ] /
+
+1       1       0       0       ...     0       0       0   ] \
+                                                                512 Mbytes direccionados
+1       1       1       1       ...     1       1       1   ] /

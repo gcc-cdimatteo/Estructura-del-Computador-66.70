@@ -1,0 +1,7 @@
+. E == "ENUNCIADO"
+. R == "RESUELTO"
+. RX == "RESUELTO N° X"
+. ER == "ENUNCIADO Y RESUELTO"
+. EX == "EJERCICIO N° X"
+
+En carpetas los resueltos por las autoras de este compilado (Caro Di Matteo y Valen Correa).

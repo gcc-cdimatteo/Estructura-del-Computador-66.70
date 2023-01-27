@@ -1,0 +1,75 @@
+1. Un programa recibe por stack la direccion de inicio de un arreglo de 16 elementos no signados. Debe calcular el promedio de todos los elementos pares y comunicar el resultado a un periférico mapeado en la direccion B71300A1h
+a) El promedio debe ser calculado por una subrutina
+b) El promedio debe ser calculado utilizando una macro
+
+09-03-2021.asm
+
+2.Ejercicio 2
+Un procesador arc ejecuta la instrucción assembler
+             srl    %r10, 12, %r7
+Se pide:
+a) Escribir un microcódigo que implemente esta instrucción de assembler indicando en que direcciones de la memoria de control estara almacenado.
+
+1+op+op3+00 = 11010011000b = 1688
+
+1688: IF R[ir[13]] THEN GOTO 1690;
+1689: R[rd] <- SRL[R[rs1], R[rs2]]; GOTO 2047;
+1690: R[temp0] <- SIMM13(R[ir]);
+1691: R[rd] <- SRL[R[rs1], R[temp0]]; GOTO 2047;
+
+b) para la segunda línea del microcódigo propuesto indicar los valores binarios (o su equivalente decimal o hexadecimal) en los siguientes puntos de la microarquitectura:
+- entradas y salidas de la lógica de control de saltos
+- líneas de datos del bus A
+- todos los bits del registro de microinstrucciones
+
+1689: R[rd] <- SRL[R[rs1], R[rs2]]; GOTO 2047;
+- Entradas y salidas de la lógica de control de saltos si pasase por la 2da línea del microcódigo (no pasa porque %r2 es inmediata): 
+    * entradas: ir[13] = 0, %psr = 0000, COND = 111
+    * salida: 10 (decode)
+
+
+3.(a) Respecto de las soluciones (a) y (b) del ejercicio 1 destacar diferencias entre ambas en tiempo de ensamblado y en tiempo de ejecucion
+
+subrutina: menos espacio de memoria, mas lenta por uso de stack que vive en ram
+macro: mas espacio de memoria, mas rapida por no pasar por el stack
+
+3(b) Indique la cantidad de bytes de codigo de maquina que genera cada una de las siguientes lineas de codigo
+      .org  3000
+      .dwb  1000
+  v   .equ  5000
+  x:  5000
+
+las directivas del ensamblador no generar código de máquina exceptuando .dwb que reserva espacio de memoria. A fines prácticos, ocupan bytes que conforman al programa.
+dado que se reserva 1000 elementos de 4 bytes, se reservan 4000 bytes de memoria en solo esa instrucción.
+ mientras que x es una declaración de variable así que ocupa bytes de memoria al igual que una instrucción, solo que en vez de que sus 32 bits representen una instrucción, son simplemente bits
+que representan un número, con lo cual ocupa 4 bytes mas. La cantidad total entonces es 4004.
+
+4.
+(a) Justifique la conveniencia o no de utilizar cache especializado para datos y para instrucciones
+
+la separación de cache especializada en datos y cache especializada en instrucciones permite 
+aprovechar la naturaleza del uso de las instrucciones. En general, las instrucciones no son modificadas en tiempo de ejecución.
+Entonces, la memoria que contiene instrucción será en el gran caso de las veces, de lectura. Por lo tanto se puede diseñar una caché
+mas sencilla para las instrucciónes, manteniendo una de datos que esté mas optimizada tanto para lectura como escritura.
+
+Esto no significa que la separación de caches sea siempre mas efectiva. La organización de caché está optimizada
+para cada estructura de computadora y los programas que corre. Su organización y tamaño suelen estar determinadas por
+resultados de simulaciones que exponen la naturaleza del trafico de memoria.
+
+(b) Que entiende por estructuras del tipo "puente" en el contexto de la estructura de comunicacion entre componentes de una computadora
+
+la estructura de tipo puente viene a solucionar el problema de tener componentes que se comunican a diferentes velocidades
+pero que se encuentran lógicamente en el mismo bus de sistema.
+
+el microprocesador no distingue entre los diferentes puentes, si no que hay un software encargado de redigir 
+a donde corresponda.
+
+el chipset contiene a:
+
+acceso rapido:
+northbtidge. Conexiones con memoria RAM, AGP, PCI express, cuyo disipador es mayor dado que cambia mas veces por segundo de estado en sus transistores
+y está mas cerca del microprocesador para no tener tanta interferencia generada por altas velocidades y largas distancias de cable. 
+
+acceso lento:
+southbridge. Conexiones con PCI, Disco Sólido, USB, Sonido, Ethernet. Su disipador no es tan grande dado que no cambia a tan
+altas velocidades.

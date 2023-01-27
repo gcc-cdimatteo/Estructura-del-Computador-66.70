@@ -1,0 +1,19 @@
+Enunciados final(09/03/2021):
+
+
+1. Un programa recibe por stack la direccion de inicio de un arreglo de 16 elementos no signados. Debe calcular el promedio de todos los elementos pares y comunicar el resultado a un periférico mapeado en la direccion B71300A1h
+a) El promedio debe ser calculado por una subrutina
+b) El promedio debe ser calculado utilizando una macro
+
+2.Ejercicio en e l word
+
+3.(a) Respecto de las soluciones (a) y (b) del ejercicio 1 destacar diferencias entre ambas en tiempo de ensamblado y en tiempo de ejecucion
+3(b) Indique la cantidad de bytes de codigo de maquina que genera cada una de las siguientes lineas de codigo
+      .org  3000
+      .dwb  1000
+  v   .equ  5000
+  x:  5000
+
+
+4.(a) Justifique la conveniencia o no de utilizar cache especializado para datos y para instrucciones
+  (b) Que entiende por estructuras del tipo "puente" en el contexto de la estructura de comunicacion entre componentes de una computadora

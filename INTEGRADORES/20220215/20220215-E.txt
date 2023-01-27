@@ -1,0 +1,14 @@
+Un procesador arc ejecuta la instrucción assembler
+             srl    %r10, 12, %r7
+Se pide:
+a) Escribir un microcódigo que implemente esta instrucción de assembler indicando en que direcciones de la memoria de control estara almacenado.
+b) para la segunda línea del microcódigo propuesto indicar los valores binarios (o su equivalente decimal o hexadecimal) en los siguientes puntos de la microarquitectura:
+- entradas y salidas de la lógica de control de saltos
+- líneas de datos del bus A
+- todos los bits del registro de microinstrucciones
+- CS Address MUX
+
+
+
+el CBL no lleva entrada de la ALU, ignoren eso
+Dice que guarda que no se sacó 10 así que no está seguro de que esté 100% bien

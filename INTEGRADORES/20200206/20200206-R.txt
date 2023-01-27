@@ -1,0 +1,22 @@
+1) para el microcódigo de ld...
+Para el instante en que se está ejecutando la primera de estas microinstrucciones indique los valores binarios presentes en...:
+
+entrada de control multiplexor del bus A: 1, pues se utiliza el contenido del registro rs1 para el bus A
+las dos entradas de datos del multiplexer del bus A: rs1 y 0, rs1 viene del ir y 0 del MIR, se utiliza el rs1
+la salida del deco del bus C: 33, pues es el registro temp0 en donde se guarda la data.
+la entrada de control del multiplexer de bus C (el de 62 a 32): 0 (no se obtiene de memoria, si no de la ALU)
+
+b)si hay un o en el bit 3 de la entrada decode del mux de microinstrucciones, entonces no se podrá guardar en el MIR nunca
+aquellas instrucciones que contengan un 1 en esa posición. el bit 3 está en 1 en las siguientes instrucciones de assembler:
+orcc, orncc, srl. Quiere decir que cuando traten de se decodificadas, en vez del orcc se ejecutará el andcc, y en vez del 
+orncc y srl, no se ejecutaará ninguna puesto que no existe esa combinación de op codes que generen un microinstrucción.
+
+2) mas codigo assembler de lo mismo.
+
+3) como un ensamblador procesa la invocción de una subrutina y la invocación de una macro
+
+a la subrutin le reemplaza el valor de la etiqueta por el valor de la tabla de símbolos de la etiqueta
+a la macro la reemplaza con el código de la macro
+
+4) Use smaller data types
+
